@@ -254,7 +254,6 @@ class BrForm {
         //add row
         $fp = fopen($this->CsvFilePath, 'a');
 
-
         if (!file_exists($this->CsvFilePath)) {
             return false;
         }
