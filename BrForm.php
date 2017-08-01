@@ -263,5 +263,15 @@ class BrForm {
 
         return true;
     }
+
+    /**
+     * end
+     *
+     * @return bool
+     */
+    public function end()
+    {
+        session_destroy();
+    }
 }
 ?>

@@ -96,4 +96,4 @@
     // $bf->CsvFilePath = 'csv file path';
     // $bf->addCsvRow();
 
-    session_destroy();
+    $bf->end();
