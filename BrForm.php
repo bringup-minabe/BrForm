@@ -272,6 +272,7 @@ class BrForm {
     public function end()
     {
         session_destroy();
+        return true;
     }
 }
 ?>
