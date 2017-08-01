@@ -56,6 +56,8 @@
     <?php echo $bf->out('name'); ?>
     <?php echo $bf->out('name_kana'); ?>
 
+    <input type="hidden" name="token" value="<?php echo $bf->out('token'); ?>">
+
 ### Send
 
     require_once('../includes/BrForm.php');
