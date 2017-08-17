@@ -2,7 +2,7 @@
 /**
  * BrForm
  *
- * ver 1.0
+ * ver 1.1
  */
 class BrForm {
 
@@ -23,6 +23,10 @@ class BrForm {
     public $csv_enclosure = '"';
     public $csv_to_encoding = 'sjis';
     public $csv_from_encoding = 'utf-8';
+
+    //Api
+    private $CusApiKey = null;
+    private $CusApiSecret = null;
 
     function __construct()
     {
@@ -219,6 +223,28 @@ class BrForm {
     }
 
     /**
+     * getValue
+     *
+     * @param string $name
+     * @param string $type
+     * @return string
+     */
+    public function getValue($name = null, $type = null)
+    {
+        if (empty($name)) {
+           return null;
+        }
+        $value = null;
+        if (isset($_SESSION[$name])) {
+            $value = $_SESSION[$name];
+            if ($type == 'checkbox') {
+                $value = implode(',', $value);
+            }
+        }
+        return $value;
+    } 
+
+    /**
      * addCsvRow
      *
      * @return bool
@@ -236,13 +262,8 @@ class BrForm {
         //set values
         $row = array(date('Y-m-d H:i:s'));
         foreach ($this->fields as $name => $field) {
-            $value = null;
-            if (isset($_SESSION[$name])) {
-                $value = $_SESSION[$name];
-                if (isset($field['type']) && $field['type'] == 'checkbox') {
-                    $value = implode(',', $value);
-                }
-            }
+            $type = isset($field['type'])? $field['type'] : null;
+            $value = self::getValue($name, $type);
             if (!empty($value)) {
                 $value = mb_convert_encoding($value, $this->csv_to_encoding, $this->csv_from_encoding);
                 $value = str_replace(array("\r\n", "\r", "\n"), '', $value);
@@ -262,6 +283,73 @@ class BrForm {
         fclose($fp);
 
         return true;
+    }
+
+    /**
+     * setCusApiKey
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function setCusApiKey($key = null)
+    {
+        $this->ApiKey = $key;
+        return true;
+    }
+
+    /**
+     * setCusApiSecret
+     *
+     * @param string $secret
+     * @return bool
+     */
+    public function setCusApiSecret($secret = null)
+    {
+        $this->ApiSecret = $secret;
+        return true;
+    }
+
+    /**
+     * postCusApi
+     *
+     * @param string $url
+     * @return array
+     */
+    public function postCusApi($url = null)
+    {
+        
+        //set data
+        foreach ($this->fields as $name => $field) {
+            $type = isset($field['type'])? $field['type'] : null;
+            $value = self::getValue($name, $type);
+            $data[$name] = $value;
+        }
+
+        if (!empty($url)) {
+            $quey = array(
+                'key' => $this->ApiKey,
+                'secret' => $this->ApiSecret
+            );
+            $url = $url . '?' . http_build_query($quey);
+        }
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        //multipartリクエストを許可していないサーバの場合
+        // curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+        $responce_body = curl_exec($curl);
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        return array(
+            'status_code' => $status_code,
+            'responce_body' => $responce_body
+        );
     }
 
     /**
