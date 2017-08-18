@@ -95,7 +95,13 @@
     }
 
     // CSVファイルへの書き込みをする場合
-    // $bf->CsvFilePath = 'csv file path';
-    // $bf->addCsvRow();
+    $bf->CsvFilePath = 'csv file path';
+    $bf->addCsvRow();
+
+    // Customer System ApiへのPOST
+    $bf->setCusApiKey('API KEY');
+    $bf->setCusApiSecret('API SECRET');
+    $responce = $bf->postCusApi('API URL');
+    $responce_body = json_decode($responce['responce_body'], true);
 
     $bf->end();
