@@ -325,6 +325,31 @@ class BrForm {
             $data[$name] = $value;
         }
 
+        /**
+         * Set Post Info
+         */
+
+        //操作IPアドレス
+        $data['REMOTE_ADDR'] = empty($_SERVER['REMOTE_ADDR'])? null : $_SERVER['REMOTE_ADDR'];
+
+        //操作時URL
+        $http = empty($_SERVER["HTTPS"])? "http://" : "https://";
+        $HTTP_HOST = empty($_SERVER["HTTP_HOST"])? null : $_SERVER["HTTP_HOST"];
+        $REQUEST_URI = empty($_SERVER["REQUEST_URI"])? null : $_SERVER["REQUEST_URI"];
+        $data['URL'] = $http . $HTTP_HOST . $REQUEST_URI;
+
+        //リファラー
+        $data['HTTP_REFERER'] = empty($_SERVER['HTTP_REFERER'])? null : $_SERVER['HTTP_REFERER'];
+
+        //HTTP_USER_AGENT
+        $data['HTTP_USER_AGENT'] = empty($_SERVER['HTTP_USER_AGENT'])? null : $_SERVER['HTTP_USER_AGENT'];
+
+        //サーバーIPアドレス
+        $data['SERVER_ADDR'] = empty($_SERVER['SERVER_ADDR'])? null : $_SERVER['SERVER_ADDR'];
+
+        /**
+         * Set Url
+         */
         if (!empty($url)) {
             $quey = array(
                 'key' => $this->ApiKey,
