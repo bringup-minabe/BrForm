@@ -313,16 +313,27 @@ class BrForm {
      * postCusApi
      *
      * @param string $url
+     * @param array $param['data'] データ指定
      * @return array
      */
-    public function postCusApi($url = null)
+    public function postCusApi($url = null, $param = array())
     {
+
+        $data = array();
         
         //set data
-        foreach ($this->fields as $name => $field) {
-            $type = isset($field['type'])? $field['type'] : null;
-            $value = self::getValue($name, $type);
-            $data[$name] = $value;
+        if (empty($param['data'])) {
+            //データ指定なし　Sessionからセット
+            foreach ($this->fields as $name => $field) {
+                $type = isset($field['type'])? $field['type'] : null;
+                $value = self::getValue($name, $type);
+                $data[$name] = $value;
+            }
+        } else {
+            //データ指定あり
+            foreach ($param['data'] as $name => $value) {
+                $data[$name] = $value;
+            }
         }
 
         /**
