@@ -134,7 +134,11 @@ class BrForm {
         $bool = true;
         foreach ($this->fields as $name => $field) {
             if (!empty($field['required'])) {
-                if (isset($_SESSION[$name]) && $_SESSION[$name] == null) {
+                if (!isset($_SESSION[$name])) {
+                    $bool = false;
+                    break;
+                }
+                if ($_SESSION[$name] === null) {
                     $bool = false;
                     break;
                 }
