@@ -2,7 +2,7 @@
 /**
  * BrForm
  *
- * ver 1.1
+ * ver 1.2
  */
 class BrForm {
 
@@ -36,7 +36,9 @@ class BrForm {
         date_default_timezone_set('Asia/Tokyo');
 
         //send mail param
-        $this->To = null;
+        $this->To = null; //複数設定の場合はカンマ区切り
+        $this->Cc = null; //複数設定の場合はカンマ区切り
+        $this->Bcc = null; //複数設定の場合はカンマ区切り
         $this->Subject = null;
         $this->Message = null;
         $this->From = null;
@@ -213,6 +215,16 @@ class BrForm {
             $header = 'From: ' . $this->From;
             if (isset($this->FromName)) {
                 $header = 'From: ' .mb_encode_mimeheader($this->FromName) . '<' . $this->From . '>';
+            }
+
+            if (!empty($this->Cc)) {
+                $header.= "\n";
+                $header .= "Cc: " . $this->Cc;
+            }
+
+            if (!empty($this->Bcc)) {
+                $header.= "\n";
+                $header .= "Bcc: " . $this->Bcc;
             }
 
             if (!mb_send_mail($this->To, $this->Subject, $this->Message, $header)) {
