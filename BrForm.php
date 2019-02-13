@@ -2,7 +2,7 @@
 /**
  * BrForm
  *
- * ver 1.2
+ * ver 1.2.2
  */
 class BrForm {
 
@@ -31,7 +31,9 @@ class BrForm {
     function __construct()
     {
 
-        session_start();
+        if(!isset($_SESSION)){ 
+            session_start();
+        }
 
         date_default_timezone_set('Asia/Tokyo');
 
@@ -212,9 +214,15 @@ class BrForm {
                 throw new Exception("Not Set From", 1004);
             }
 
-            $header = 'From: ' . $this->From;
-            if (isset($this->FromName)) {
-                $header = 'From: ' .mb_encode_mimeheader($this->FromName) . '<' . $this->From . '>';
+            $header = null;
+
+            $header .= "MIME-Version: 1.0\n";
+            $header .= "Content-Type: text/plain; charset=ISO-2022-JP\n";
+
+            if (empty($this->FromName)) {
+                $header .= 'From: ' . $this->From;
+            } else {
+                $header .= 'From: ' .mb_encode_mimeheader($this->FromName, 'ISO-2022-JP', 'B', '\n') . '<' . $this->From . '>';
             }
 
             if (!empty($this->Cc)) {
