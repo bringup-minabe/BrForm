@@ -31,7 +31,7 @@ class BrForm {
     function __construct()
     {
 
-        if(!isset($_SESSION)){ 
+        if(!isset($_SESSION)){
             session_start();
         }
 
@@ -220,10 +220,14 @@ class BrForm {
             $header .= "Content-Type: text/plain; charset=ISO-2022-JP\n";
 
             if (empty($this->FromName)) {
-                $header .= 'From: ' . $this->From;
+              $header .= 'From: ' . $this->From . "\n";
             } else {
-                $header .= 'From: ' .mb_encode_mimeheader($this->FromName, 'ISO-2022-JP', 'B', '\n') . '<' . $this->From . '>';
+              $header .= 'From: ' .mb_encode_mimeheader($this->FromName, 'ISO-2022-JP', 'B', '\n') . '<' . $this->From . '>';
+              $header .= "\n";
             }
+
+            $header .= 'Sender: ' .$this->From . "\n";
+            $header .= 'X-Sender: ' .$this->From;
 
             if (!empty($this->Cc)) {
                 $header.= "\n";
@@ -266,7 +270,7 @@ class BrForm {
             }
         }
         return $value;
-    } 
+    }
 
     /**
      * addCsvRow
@@ -344,7 +348,7 @@ class BrForm {
     {
 
         $data = array();
-        
+
         //set data
         if (empty($param['data'])) {
             //データ指定なし　Sessionからセット
